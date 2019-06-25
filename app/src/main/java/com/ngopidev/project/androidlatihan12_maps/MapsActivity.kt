@@ -5,7 +5,9 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
+import android.widget.Toast
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
@@ -27,6 +29,14 @@ GoogleMap.OnMarkerClickListener{
     private lateinit var fusedLocationClient : FusedLocationProviderClient
     private lateinit var lastLocation : Location
 
+    var isOpenFAB : Boolean = false
+
+    private lateinit var fab: FloatingActionButton
+    private lateinit var fab1: FloatingActionButton
+    private lateinit var fab2: FloatingActionButton
+    private lateinit var fab3: FloatingActionButton
+    private lateinit var fab4: FloatingActionButton
+
     companion object {
         private const val LOCATION_PERMISSION = 1
     }
@@ -40,7 +50,21 @@ GoogleMap.OnMarkerClickListener{
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        fab = findViewById(R.id.fab)
+        fab1 = findViewById(R.id.fab1)
+        fab2 = findViewById(R.id.fab2)
+        fab3 = findViewById(R.id.fab3)
+        fab4 = findViewById(R.id.fab4)
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        fab.setOnClickListener {
+            if(isOpenFAB){
+                closeFab()
+            }else{
+                showFAB()
+            }
+        }
     }
 
     /**
@@ -93,6 +117,23 @@ GoogleMap.OnMarkerClickListener{
                     , 18.0f))
             }
         }
+
+        fab1.setOnClickListener {
+            mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+            Toast.makeText(applicationContext, "Normal selected", Toast.LENGTH_SHORT).show()
+        }
+        fab2.setOnClickListener {
+            mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
+            Toast.makeText(applicationContext, "Terrain selected", Toast.LENGTH_SHORT).show()
+        }
+        fab3.setOnClickListener {
+            mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            Toast.makeText(applicationContext, "Satellite selected", Toast.LENGTH_SHORT).show()
+        }
+        fab4.setOnClickListener {
+            mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
+            Toast.makeText(applicationContext, "Hybrid selected", Toast.LENGTH_SHORT).show()
+        }
     }
     fun placeMarkerInMaps(loc : LatLng){
         val markerOptions = MarkerOptions().position(loc)
@@ -100,5 +141,23 @@ GoogleMap.OnMarkerClickListener{
             BitmapFactory.decodeResource(resources, R.mipmap.ic_mobilmobilan)
         ))
         mMap.addMarker(markerOptions)
+    }
+
+    fun showFAB(){
+        isOpenFAB=true
+        fab.setImageDrawable(resources.getDrawable(android.R.drawable.arrow_down_float))
+        fab1.animate().translationY(-getResources().getDimension(R.dimen.standard_55))
+        fab2.animate().translationY(-getResources().getDimension(R.dimen.standard_105))
+        fab3.animate().translationY(-getResources().getDimension(R.dimen.standard_155))
+        fab4.animate().translationY(-getResources().getDimension(R.dimen.standard_205))
+    }
+
+    fun closeFab(){
+        isOpenFAB=false
+        fab.setImageDrawable(resources.getDrawable(android.R.drawable.arrow_up_float))
+        fab1.animate().translationY(0f)
+        fab2.animate().translationY(0f)
+        fab3.animate().translationY(0f)
+        fab4.animate().translationY(0f)
     }
 }
